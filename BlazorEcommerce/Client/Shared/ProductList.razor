@@ -1,4 +1,6 @@
-﻿@inject HttpClient HttpClient
+﻿@using Newtonsoft.Json
+
+@inject HttpClient HttpClient
 
 
 <ul class="list-unstyled">
@@ -27,7 +29,8 @@
     private static List<Product> Products = new List<Product>();
 
     protected override async Task OnInitializedAsync() {
-        var result = await HttpClient.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/Product");
+        var rawJson = await HttpClient.GetStringAsync("api/Product");
+        var result = JsonConvert.DeserializeObject<ServiceResponse<List<Product>>>(rawJson);
         if(result != null && result.Data != null) {
             Products = result.Data;
         }
