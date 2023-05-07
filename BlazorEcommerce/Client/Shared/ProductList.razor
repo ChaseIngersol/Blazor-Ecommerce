@@ -1,38 +1,35 @@
 ﻿@using Newtonsoft.Json
 
-@inject HttpClient HttpClient
+@inject IProductService ProductService
 
-
-<ul class="list-unstyled">
-    @foreach (Product product in Products) {
-        <li class="media my-3">
-            <div class="media-img-wrapper mr-2">
-                <a href="#">
-                    <img class="media-img" src="@product.ImageUrl" alt="@product.Title"/>
-                </a>
-            </div>
-            <div class="media-body">
-                <a href="#">
-                    <h4 class="mb-0">@product.Title</h4>
-                </a>
-                <p class="">@product.Description</p>
-                <h5 class="price">
-                    $@product.Price
-                </h5>
-            </div>
-        </li>
-    }
-</ul>
+@if(ProductService.Products == null || ProductService.Products.Count == 0) {
+   <span>Loading Products...</span> 
+} else { 
+    <ul class="list-unstyled">
+        @foreach (Product product in ProductService.Products) {
+            <li class="media my-3">
+                <div class="media-img-wrapper mr-2">
+                    <a href="#">
+                        <img class="media-img" src="@product.ImageUrl" alt="@product.Title"/>
+                    </a>
+                </div>
+                <div class="media-body">
+                    <a href="#">
+                        <h4 class="mb-0">@product.Title</h4>
+                    </a>
+                    <p class="">@product.Description</p>
+                    <h5 class="price">
+                        $@product.Price
+                    </h5>
+                </div>
+            </li>
+        }
+    </ul>
+}
 
 
 @code {
-    private static List<Product> Products = new List<Product>();
-
     protected override async Task OnInitializedAsync() {
-        var rawJson = await HttpClient.GetStringAsync("api/Product");
-        var result = JsonConvert.DeserializeObject<ServiceResponse<List<Product>>>(rawJson);
-        if(result != null && result.Data != null) {
-            Products = result.Data;
-        }
+        await ProductService.GetProducts();
     }
 }
