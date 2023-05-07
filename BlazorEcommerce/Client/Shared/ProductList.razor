@@ -27,9 +27,9 @@
     private static List<Product> Products = new List<Product>();
 
     protected override async Task OnInitializedAsync() {
-        var result = await HttpClient.GetFromJsonAsync<List<Product>>("api/Product");
-        if(result != null) {
-            Products = result;
+        var result = await HttpClient.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/Product");
+        if(result != null && result.Data != null) {
+            Products = result.Data;
         }
     }
 }
